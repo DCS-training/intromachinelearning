@@ -1,4 +1,4 @@
-# Machine Learning in Python
+# Introduction to Machine Learning
 Welcome to the repository for the An Introduction to Machine Learning course (formally 'Intro to Machine Learning in Python' delivered by in 2023 and 2024). This course is aimed at providing an introduction to machine learning covering:
 
 - What Is Machine Learning and A Recap of Exploratory Data Analysis (EDA)
@@ -6,7 +6,7 @@ Welcome to the repository for the An Introduction to Machine Learning course (fo
 - More Classification Models (Decision Trees and k-NN)
 - Regression and Practical Considerations in ML
 
-It is expected that those taking this course are have some beginner level Python (as offered in the [Introduction to Python](https://github.com/DCS-training/IntroToPython?tab=readme-ov-file) CDCS course).
+The language chosen for course delivery is Python. It is therefore expected that those taking this course are have some beginner level Python (as offered in the [Introduction to Python](https://github.com/DCS-training/IntroToPython?tab=readme-ov-file) CDCS course).
 
 The materials in this repo are most recently adapted by **Chris Oldnall** (with original resources by **Bhargavi Ganesh**). All material collected here is free to use but is covered by a License: [![License: CC BY-NC 4.0](https://licensebuttons.net/l/by-nc/4.0/80x15.png)](https://creativecommons.org/licenses/by-nc/4.0/) license
 

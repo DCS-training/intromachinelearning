@@ -17,8 +17,11 @@ Throughout this course, we will be using the [Noteable](https://noteable.edina.a
 #### Start Noteable
 1.  Open the following link in a new tab:  [https://noteable.edina.ac.uk/login](https://noteable.edina.ac.uk/login).
 2.  Login with your EASE credentials (either your Edinburgh university login, or those you were provided with).
-3.a If you are using Python, select 'Standard Notebook (Python 3)' click 'Start'
-3.b If you are using RStudio, select 'RStudio' and click 'Start'
+3.  Start your environment
+   
+  a.   If you are using Python, select 'Standard Notebook (Python 3)' click 'Start'
+
+  b.   If you are using RStudio, select 'RStudio' and click 'Start'
 
 #### Download the files to Noteable Python 
 1.  From the Noteable home page, click on the '+GitRepo' button at the top right of the screen.

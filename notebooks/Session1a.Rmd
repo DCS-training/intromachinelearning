@@ -1,0 +1,66 @@
+---
+title: "Session 1a - Titanic Dataset Analysis"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# An Introduction to Machine Learning
+## Session 1a: Introduction to Machine Learning and Data Exploration
+
+Welcome to Session 1a of our Introduction to Machine Learning course! In this session, we'll begin by exploring what machine learning is and how it can help us make predictions and uncover insights from data. Machine learning is all about building models that learn from data, helping us answer questions like “What factors impact wine quality?” or “Which characteristics are most common among people who survived the Titanic sinking?”
+
+We'll be working with the Titanic dataset, which provides information on passengers, including details like age, class, and whether they survived the sinking. Our aim is to explore this data and understand the factors that might influence survival—this process, called Exploratory Data Analysis (EDA), is key to understanding what information is useful in our machine learning models.
+
+By the end of this part of the session, you'll have a better understanding of what machine learning can do, and you'll be equipped to start thinking about how to build and evaluate models.
+
+### 1. Importing relevant packages and data.
+
+```{r, package_data_load}
+library(tidyverse)
+titanic_train <- read_csv("../data/titanic_train.csv")
+```
+
+### 2. Exploratory Data Analysis (EDA)
+
+```{r}
+head(titanic_train)
+glimpse(titanic_train)
+summary(titanic_train)
+```
+
+It is always important to check for missing data points within a data set -- this is not exclusive to machine learning but all data analysis! Have a go at understanding the missingness below.
+
+```{r}
+# EXERCISE: Check for missing values in each column.
+# Hint: Use .isna() and colSums to get the count of missing values.
+
+```
+
+```{r}
+titanic_train %>%
+  ggplot(aes(x = factor(Survived))) +
+  geom_bar(fill = "steelblue") +
+  labs(title = "Distribution of Survival",
+       x = "Survived (0 = No, 1 = Yes)",
+       y = "Count")
+```
+
+
+```{r}
+# EXERCISE: Plot survival by passenger class using sns.countplot with hue='Survived'.
+
+```
+
+```{r}
+# EXERCISE: Plot survival by sex to see how it affects survival rates.
+
+```
+
+Based on these visualisations, we can now start to hypothesise which features seem important for predicting survival.
+
+EXERCISE: In this cell, write down the features you think are important for predicting survival, and explain why you chose each one.
+
+- Insert features here.

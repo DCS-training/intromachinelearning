@@ -1,0 +1,90 @@
+---
+title: "Session 1b - Titanic Logistic Regression"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# An Introduction to Machine Learning
+## Session 1b: Classification Basics and Logistic Regression
+
+Welcome to Session 1b! We'll delve deeper into machine learning by exploring classification models. Classification models help us predict categorical outcomes, like whether a passenger on the Titanic survived or not.
+
+We'll introduce Logistic Regression, one of the most straightforward classification models, and use it to make predictions based on features in the Titanic dataset. You'll also learn about how to evaluate classification models using metrics like accuracy, precision, and recall. By the end of this session, you'll have a solid foundation in training and evaluating a basic classification model.
+
+### 1. Importing packages and pre-processing for classification data.
+
+```{r, package_data}
+library(tidyverse)
+library(tidymodels)
+titanic_data <- read_csv("/Users/chrisoldnall/Library/Mobile Documents/com~apple~CloudDocs/Teaching/machine_learning_python/data/titanic_train.csv")
+```
+
+```{r}
+# Fill missing values for 'Age' with median and fill missing values for 'Embarked' with mode.
+titanic_data <- titanic_data %>%
+  mutate(
+    Age = if_else(is.na(Age), median(Age, na.rm = TRUE), Age),
+    Embarked = if_else(is.na(Embarked), names(sort(table(Embarked), decreasing = TRUE))[1], Embarked)
+  )
+```
+
+```{r}
+# Convert 'Sex' to numerical values and 'Embarked' with one-hot encoding
+titanic_data <- titanic_data %>%
+  mutate(Sex = if_else(Sex == "male", 0, 1)) %>%
+  mutate(Survived = factor(Survived)) %>%
+  mutate(Pclass = factor(Pclass)) %>%
+  mutate(Embarked = factor(Embarked)) %>%
+  mutate(SibSp = as.numeric(SibSp),
+         Parch = as.numeric(Parch))
+
+# Create one-hot encoded columns using pivot_wider-style logic
+titanic_data <- titanic_data %>%
+  mutate(Embarked = factor(Embarked)) %>%
+  mutate(dummy = 1) %>%
+  pivot_wider(names_from = Embarked, values_from = dummy, values_fill = 0, names_prefix = "Embarked_")
+```
+
+```{r}
+set.seed(42)
+data_split <- initial_split(titanic_data, prop = 0.8, strata = Survived)
+train_data <- training(data_split)
+test_data <- testing(data_split)
+```
+
+### 2. Logistic regression classifier
+
+```{r}
+model <- glm(Survived ~ Sex + Age + Fare + factor(Pclass) + SibSp + Parch,
+             data = train_data, family = binomial)
+
+summary(model)
+```
+
+```{r}
+# Predict probabilities and classes\
+test_data <- test_data %>%
+  mutate(
+    Age = if_else(is.na(Age), median(Age, na.rm = TRUE), Age),
+    Fare = if_else(is.na(Fare), median(Fare, na.rm = TRUE), Fare),
+  )
+  
+predicted_probs <- predict(model, newdata = test_data, type = "response")
+predicted_classes <- if_else(predicted_probs > 0.5, "1", "0") %>% factor(levels = c("0", "1"))
+actual_classes <- factor(test_data$Survived, levels = c("0", "1"))
+```
+
+```{r}
+# Confusion matrix
+conf_mat <- table(Predicted = predicted_classes, Actual = actual_classes)
+conf_mat
+```
+
+```{r}
+# Accuracy
+accuracy <- mean(predicted_classes == actual_classes)
+accuracy
+```

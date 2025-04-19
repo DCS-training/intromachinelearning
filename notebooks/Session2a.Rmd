@@ -1,0 +1,201 @@
+---
+title: "Session 2a - More Classification Models (Decision Trees and k-NN)"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Welcome to Session 2a! Today, we'll explore two additional classification models: Decision Trees and k-Nearest Neighbours (k-NN). Each of these models uses different approaches to classify data, which we’ll examine in depth.
+
+We'll apply both models to the Titanic dataset and compare them to our previous Logistic Regression model, looking at accuracy, precision, recall, and model interpretability. By the end, you'll have a broader toolkit for classification tasks and a better understanding of how different models handle the same data.
+
+### 1. Importing packages and data prep.
+
+```{r}
+# Load necessary libraries
+required_packages <- c("tidyverse", "caret", "rpart", "rpart.plot", "class", "e1071", "mlbench")
+# Install any that are not yet installed
+installed_packages <- rownames(installed.packages())
+to_install <- setdiff(required_packages, installed_packages)
+if(length(to_install)) install.packages(to_install)
+# Load them all
+invisible(lapply(required_packages, library, character.only = TRUE))
+```
+
+```{r}
+titanic_data <- read_csv("/Users/chrisoldnall/Library/Mobile Documents/com~apple~CloudDocs/Teaching/machine_learning_python/data/titanic_train.csv")
+titanic_data$Age[is.na(titanic_data$Age)] <- median(titanic_data$Age, na.rm = TRUE)
+titanic_data$Embarked[is.na(titanic_data$Embarked)] <- names(sort(table(titanic_data$Embarked), decreasing = TRUE))[1]
+titanic_data$Sex <- ifelse(titanic_data$Sex == "male", 0, 1)
+titanic_data <- titanic_data %>%
+  mutate(Embarked = factor(Embarked)) %>%
+  mutate(Embarked_Q = ifelse(Embarked == "Q", 1, 0),
+         Embarked_S = ifelse(Embarked == "S", 1, 0))
+```
+
+```{r}
+features <- c("Pclass", "Sex", "Age", "SibSp", "Parch", "Fare", "Embarked_Q", "Embarked_S")
+X <- titanic_data %>% select(all_of(features))
+y <- as.factor(titanic_data$Survived)
+```
+
+```{r}
+set.seed(42)
+train_index <- createDataPartition(y, p = 0.8, list = FALSE)
+X_train <- X[train_index, ]
+X_test <- X[-train_index, ]
+y_train <- y[train_index]
+y_test <- y[-train_index]
+```
+
+### 2. Decision Trees
+
+```{r}
+# Initialise the Decision Tree Classifier
+# Hint: we need to use y_train ~ .
+
+tree_model <- rpart(________, data = X_train, method = "class", control = rpart.control(cp = 0))
+```
+
+```{r}
+# EXERCISE: Predict using 'tree_model' on 'X_test' and calculate accuracy, precision, and recall.
+y_pred_tree <- predict(______, ______, type = "class")
+```
+
+```{r}
+conf_matrix_tree <- confusionMatrix(y_pred_tree, y_test, positive = "1")
+accuracy_tree <- conf_matrix_tree$overall['Accuracy']
+precision_tree <- conf_matrix_tree$byClass['Precision']
+recall_tree <- conf_matrix_tree$byClass['Recall']
+
+cat(sprintf("Decision Tree Accuracy: %.3f\n", accuracy_tree))
+cat(sprintf("Decision Tree Precision: %.3f\n", precision_tree))
+cat(sprintf("Decision Tree Recall: %.3f\n", recall_tree))
+```
+
+```{r}
+# Plot confusion matrix
+cm_tree_df <- as.data.frame(conf_matrix_tree$table)
+ggplot(cm_tree_df, aes(x = Reference, y = Prediction, fill = Freq)) +
+  geom_tile() +
+  geom_text(aes(label = Freq), vjust = 1.5, colour = "black") +
+  scale_fill_gradient(low = "white", high = "steelblue") +
+  labs(title = "Decision Tree Confusion Matrix")
+```
+
+### 3. k-Nearest Neighbours (k-NN) Model
+
+```{r}
+
+# EXERCISE: Train and use the k-NN model on X_train and y_train. Use k=5.
+# Ensure all inputs are scaled numerically for k-NN
+X_train_scaled <- scale(X_train)
+X_test_scaled <- scale(X_test, center = attr(X_train_scaled, "scaled:center"), scale = attr(X_train_scaled, "scaled:scale"))
+
+y_pred_knn <- knn(train = _______, test = _______, cl = y_train, k = ____)
+
+conf_matrix_knn <- confusionMatrix(y_pred_knn, y_test, positive = "1")
+accuracy_knn <- conf_matrix_knn$overall['Accuracy']
+precision_knn <- conf_matrix_knn$byClass['Precision']
+recall_knn <- conf_matrix_knn$byClass['Recall']
+
+cat(sprintf("k-NN Accuracy: %.3f\n", accuracy_knn))
+cat(sprintf("k-NN Precision: %.3f\n", precision_knn))
+cat(sprintf("k-NN Recall: %.3f\n", recall_knn))
+```
+
+```{r}
+# Plot confusion matrix for k-NN
+cm_knn_df <- as.data.frame(conf_matrix_knn$table)
+ggplot(cm_knn_df, aes(x = Reference, y = Prediction, fill = Freq)) +
+  geom_tile() +
+  geom_text(aes(label = Freq), vjust = 1.5, colour = "black") +
+  scale_fill_gradient(low = "white", high = "steelblue") +
+  labs(title = "k-NN Confusion Matrix")
+```
+
+### 4. Comparing model performance
+
+```{r}
+# Create a performance comparison table for Decision Tree and k-NN
+performance <- data.frame(
+  Model = c("Decision Tree", "k-NN"),
+  Accuracy = c(accuracy_tree, accuracy_knn),
+  Precision = c(precision_tree, precision_knn),
+  Recall = c(recall_tree, recall_knn)
+)
+
+print(performance)
+```
+
+
+1. Which model has the highest accuracy? 
+2. Do precision and recall tell a different story compared to accuracy?
+3. Which model do you think would be more reliable for predicting survival? Why?
+
+### 5. Decision Boundaries
+
+A decision boundary is a line or surface that separates different classes in a classification model. It helps to visualise how a model decides which class a data point belongs to based on its features. Imagine you're classifying passengers on the Titanic as either “survived” or “did not survive” based on characteristics like ticket class and fare paid. A decision boundary shows where the model would classify one group differently from another. If a new data point falls on one side of the boundary, it gets classified into one category; if it falls on the other, it's assigned to the other category.
+
+Different models create decision boundaries in different ways. For example, Decision Trees tend to create straight, box-like boundaries as they split the data sequentially by feature values, which can make them appear less smooth but highly interpretable. k-Nearest Neighbours (k-NN), on the other hand, classifies points based on the nearest neighbours around them, so the decision boundary is influenced by the actual data distribution. This can result in more complex and flexible boundaries that adapt to the structure of the data, especially when more neighbours are considered.
+
+Decision boundaries are a helpful visual tool for understanding a model's behaviour and limitations. In situations with clear separation between classes, decision boundaries help us see where the model might make mistakes or misclassify points, especially when classes overlap. By plotting these boundaries, we can better understand why a model may make certain predictions and where it might struggle with accuracy.
+
+```{r}
+# Selecting two features for visualising decision boundaries (Pclass and Fare)
+
+plot_decision_boundary <- function(model, X, y, title, method = "tree", k = 5) {
+  # Prepare the selected features
+  X_selected <- X %>% select(Pclass, Fare)
+  data <- data.frame(X_selected, Survived = y)
+
+  # Fit the model
+  if (method == "tree") {
+    model_fit <- rpart(Survived ~ ., data = data, method = "class")
+    predict_function <- function(newdata) {
+      predict(model_fit, newdata, type = "class")
+    }
+  } else if (method == "knn") {
+    # Scale data for k-NN
+    X_scaled <- scale(X_selected)
+    attr_center <- attr(X_scaled, "scaled:center")
+    attr_scale <- attr(X_scaled, "scaled:scale")
+    X_selected <- as.data.frame(X_scaled)
+    predict_function <- function(newdata) {
+      new_scaled <- scale(newdata, center = attr_center, scale = attr_scale)
+      knn(train = X_selected, test = new_scaled, cl = y, k = k)
+    }
+  }
+
+  # Create grid for plotting
+  x_min <- min(X$Pclass) - 1
+  x_max <- max(X$Pclass) + 1
+  y_min <- min(X$Fare) - 1
+  y_max <- max(X$Fare) + 1
+
+  grid <- expand.grid(
+    Pclass = seq(x_min, x_max, by = 0.1),
+    Fare = seq(y_min, y_max, by = 0.5)
+  )
+
+  # Predict over the grid
+  grid$Prediction <- predict_function(grid)
+
+  # Plotting
+  ggplot() +
+    geom_tile(data = grid, aes(x = Pclass, y = Fare, fill = as.factor(Prediction)), alpha = 0.3) +
+    geom_point(data = data, aes(x = Pclass, y = Fare, colour = as.factor(Survived)), size = 2) +
+    scale_fill_manual(values = c("#FFAAAA", "#AAAAFF"), name = "Prediction") +
+    scale_colour_manual(values = c("#FF0000", "#0000FF"), name = "Actual") +
+    labs(title = title, x = "Pclass", y = "Fare") +
+    theme_minimal()
+}
+
+# Plot decision boundary for Decision Tree
+plot_decision_boundary(tree_model, X_train, y_train, "Decision Tree Decision Boundary", method = "tree")
+
+# Plot decision boundary for k-NN
+plot_decision_boundary(NULL, X_train, y_train, "k-NN Decision Boundary", method = "knn", k = 5)
+```

@@ -1,0 +1,159 @@
+---
+title: "Session 2b - Regression and Practical Considerations in ML"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Welcome to Session 2b! We'll explore a new type of machine learning model: regression. While classification models predict categories, regression models predict continuous values, making them useful in situations like forecasting sales, predicting scores, or analysing trends.
+
+We'll focus on Linear Regression, a foundational model in machine learning. By the end of this session, you'll understand how Linear Regression works, how to evaluate a regression model, and how to interpret its predictions.
+
+### 1. Importing libraries and data-processing
+
+```{r}
+# Run this cell to import necessary libraries
+required_packages <- c("tidyverse", "caret", "ggplot2", "readr", "dplyr", "gridExtra", "Metrics", "broom")
+installed_packages <- rownames(installed.packages())
+to_install <- setdiff(required_packages, installed_packages)
+if(length(to_install)) install.packages(to_install)
+invisible(lapply(required_packages, library, character.only = TRUE))
+
+# Load both datasets
+white_wine <- read_csv("/Users/chrisoldnall/Library/Mobile Documents/com~apple~CloudDocs/Teaching/machine_learning_python/data/winequality-white.csv")
+red_wine <- read_csv("/Users/chrisoldnall/Library/Mobile Documents/com~apple~CloudDocs/Teaching/machine_learning_python/data/winequality-red.csv")
+```
+
+```{r}
+# Display the first few rows of each to understand structure
+head(white_wine)
+head(red_wine)
+
+# Display info for both datasets
+cat("White Wine Dataset Info:\n")
+glimpse(white_wine)
+
+cat("\nRed Wine Dataset Info:\n")
+glimpse(red_wine)
+
+# Check for missing values
+cat("White Wine Missing Info:\n")
+colSums(is.na(white_wine))
+
+cat("Red Wine Missing Info:\n")
+colSums(is.na(red_wine))
+```
+
+```{r}
+# Define features and target variable
+features <- c("alcohol", "sulphates", "citric acid", "density", "pH")
+X_white <- white_wine %>% select(all_of(features))
+y_white <- white_wine$quality
+X_red <- red_wine %>% select(all_of(features))
+y_red <- red_wine$quality
+
+# EXERCISE: Split the white wine dataset into training and testing sets.
+# Hint: Use train_test_split with test_size=0.2 and random_state=42 for consistency.
+set.seed(______)
+train_index <- createDataPartition(y_white, p = ______, list = FALSE)
+X_train_white <- X_white[train_index, ]
+X_test_white <- X_white[-train_index, ]
+y_train_white <- y_white[train_index]
+y_test_white <- y_white[-train_index]
+```
+
+### 2. Linear Regression Modelling
+
+```{r}
+# Initialise the Linear Regression model
+# EXERCISE: Train the Linear Regression model on X_train and y_train.
+linear_reg <- lm(______ ~ ., data = _______)
+```
+
+```{r}
+# EXERCISE: Predict the quality scores on X_test using the trained model.
+y_pred <- predict(linear_reg, newdata = _______)
+```
+
+```{r}
+# Calculate Mean Squared Error, Mean Absolute Error, and R-squared
+mse <- mean((y_test_white - y_pred)^2)
+mae <- mean(abs(y_test_white - y_pred))
+r2 <- 1 - sum((y_test_white - y_pred)^2) / sum((y_test_white - mean(y_test_white))^2)
+
+cat(sprintf("Mean Squared Error: %.4f\n", mse))
+cat(sprintf("Mean Absolute Error: %.4f\n", mae))
+cat(sprintf("R-squared: %.4f\n", r2))
+```
+
+REFLECTION:
+1. Based on the MSE, MAE, and R² values, what can you conclude about the model's accuracy?
+2. Which metric do you think best describes the model's performance?
+
+1. Whilst the MSE/MAE seem ok, it does seem to be that the linear regression model is not generally well fitting to the data.
+
+2. Here I think it is probably the MSE, since it reflects the error in quality which is important to be able to interpret here.
+
+### 3. Interpreting actual vs predicted values.
+
+```{r}
+# Plot predictions vs. actual values
+ggplot(data = NULL, aes(x = y_test_white, y = y_pred)) +
+  geom_point(alpha = 0.5) +
+  geom_abline(intercept = 0, slope = 1, col = "red", linetype = "dashed") +
+  labs(x = "Actual Quality", y = "Predicted Quality", title = "Predicted vs. Actual Quality Scores") +
+  theme_minimal()
+```
+
+```{r}
+# EXERCISE: Print the model coefficients and intercept.
+cat("Model Coefficients:\n")
+coef_df <- tidy(linear_reg)
+print(coef_df)
+```
+
+REFLECTION:
+1. Which features have the highest positive or negative coefficients?
+2. Do these coefficients align with what you would expect based on the data?
+
+### 4. Running this on the red wine data.
+
+```{r}
+# EXERCISE: Predict the quality of red wine using the model trained on white wine.
+y_pred_red <- predict(linear_reg, newdata = ______)
+
+# Calculate evaluation metrics for red wine predictions
+mse_red <- mean((y_red - y_pred_red)^2)
+mae_red <- mean(abs(y_red - y_pred_red))
+r2_red <- 1 - sum((y_red - y_pred_red)^2) / sum((y_red - mean(y_red))^2)
+
+cat("\nModel Performance on Red Wine Data:\n")
+cat(sprintf("Mean Squared Error: %.4f\n", mse_red))
+cat(sprintf("Mean Absolute Error: %.4f\n", mae_red))
+cat(sprintf("R-squared: %.4f\n", r2_red))
+```
+
+```{r}
+# Create a performance comparison table
+comparison <- data.frame(
+  Dataset = c("White Wine Test Set", "Red Wine (New Data)"),
+  Mean_Squared_Error = c(mse, mse_red),
+  Mean_Absolute_Error = c(mae, mae_red),
+  R_squared = c(r2, r2_red)
+)
+
+print(comparison)
+```
+
+REFLECTION:
+1. How does the model's performance change when applied to red wine data?
+2. Why do you think the model performed differently on the red wine dataset?
+3. What does this tell you about generalising models across similar datasets?
+
+1. When applied to the red wine data, the model performs slightly worse across all metrics. The Mean Squared Error (MSE) and Mean Absolute Error (MAE) both increase (MSE: 0.615 → 0.622; MAE: 0.619 → 0.636), and the R-squared value drops significantly (0.206 → 0.046). This indicates that the model explains far less of the variance in the red wine dataset compared to the white wine test set.
+
+2. The performance drop likely stems from differences in the underlying characteristics of red and white wine datasets. Although they may have similar feature names, the relationships between those features and wine quality could vary significantly. For example, red wine may rely more heavily on different chemical properties (e.g. tannins, colour intensity) that are either underrepresented or absent in the white wine training data. This would lead to poorer generalisation when the model is applied to red wine.
+
+3. This highlights the importance of domain specificity in machine learning. Even when datasets seem related—such as red and white wine quality—they may require separate modelling or adaptation techniques (e.g. transfer learning or retraining) to perform well. It shows that models trained on one dataset do not necessarily generalise well to even superficially similar datasets without accounting for underlying distributional differences.

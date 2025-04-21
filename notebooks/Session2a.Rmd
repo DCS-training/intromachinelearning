@@ -25,7 +25,7 @@ invisible(lapply(required_packages, library, character.only = TRUE))
 ```
 
 ```{r}
-titanic_data <- read_csv("/Users/chrisoldnall/Library/Mobile Documents/com~apple~CloudDocs/Teaching/machine_learning_python/data/titanic_train.csv")
+titanic_data <- read_csv("../data/titanic_train.csv")
 titanic_data$Age[is.na(titanic_data$Age)] <- median(titanic_data$Age, na.rm = TRUE)
 titanic_data$Embarked[is.na(titanic_data$Embarked)] <- names(sort(table(titanic_data$Embarked), decreasing = TRUE))[1]
 titanic_data$Sex <- ifelse(titanic_data$Sex == "male", 0, 1)

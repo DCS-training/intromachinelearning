@@ -19,7 +19,7 @@ We'll introduce Logistic Regression, one of the most straightforward classificat
 ```{r, package_data}
 library(tidyverse)
 library(tidymodels)
-titanic_data <- read_csv("/Users/chrisoldnall/Library/Mobile Documents/com~apple~CloudDocs/Teaching/machine_learning_python/data/titanic_train.csv")
+titanic_data <- read_csv("../data/titanic_train.csv")
 ```
 
 ```{r}

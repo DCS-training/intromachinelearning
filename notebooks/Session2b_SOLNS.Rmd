@@ -56,8 +56,8 @@ y_red <- red_wine$quality
 
 # EXERCISE: Split the white wine dataset into training and testing sets.
 # Hint: Use train_test_split with test_size=0.2 and random_state=42 for consistency.
-set.seed(______)
-train_index <- createDataPartition(y_white, p = ______, list = FALSE)
+set.seed(42)
+train_index <- createDataPartition(y_white, p = 0.8, list = FALSE)
 X_train_white <- X_white[train_index, ]
 X_test_white <- X_white[-train_index, ]
 y_train_white <- y_white[train_index]
@@ -69,12 +69,12 @@ y_test_white <- y_white[-train_index]
 ```{r}
 # Initialise the Linear Regression model
 # EXERCISE: Train the Linear Regression model on X_train and y_train.
-linear_reg <- lm(______ ~ ., data = _______)
+linear_reg <- lm(y_train_white ~ ., data = X_train_white)
 ```
 
 ```{r}
 # EXERCISE: Predict the quality scores on X_test using the trained model.
-y_pred <- predict(linear_reg, newdata = _______)
+y_pred <- predict(linear_reg, newdata = X_test_white)
 ```
 
 ```{r}
@@ -122,7 +122,7 @@ REFLECTION:
 
 ```{r}
 # EXERCISE: Predict the quality of red wine using the model trained on white wine.
-y_pred_red <- predict(linear_reg, newdata = ______)
+y_pred_red <- predict(linear_reg, newdata = X_red)
 
 # Calculate evaluation metrics for red wine predictions
 mse_red <- mean((y_red - y_pred_red)^2)

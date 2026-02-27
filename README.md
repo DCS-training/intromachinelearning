@@ -1,5 +1,5 @@
 # Introduction to Machine Learning
-Welcome to the repository for the An Introduction to Machine Learning course (formally 'Intro to Machine Learning in Python' delivered in 2023 and 2024). This course will be re-delivered this year (2026) by Somya Iqbal & Joy Lan. The course is aimed at providing an introduction to machine learning covering:
+Welcome to the repository for the An Introduction to Machine Learning course (formally 'Intro to Machine Learning in Python' delivered in 2023 and 2024). This course will be re-delivered this year (2026 - 06/03/ session 1 & 13/03/ session 2) by Somya Iqbal & Joy Lan. The course is aimed at providing an introduction to machine learning covering:
 
 - What Is Machine Learning and A Recap of Exploratory Data Analysis (EDA)
 - Classification Basics and Logistic Regression

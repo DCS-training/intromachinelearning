@@ -56,7 +56,7 @@ y_test <- y[-train_index]
 # Initialise the Decision Tree Classifier
 # Hint: we need to use y_train ~ .
 
-tree_model <- rpart(y_train ~ Pclass, data = X_train, method = "class", control = rpart.control(cp = 0))
+tree_model <- rpart(y_train ~ ., data = X_train, method = "class", control = rpart.control(cp = 0))
 ```
 
 ```{r}
@@ -94,7 +94,7 @@ ggplot(cm_tree_df, aes(x = Reference, y = Prediction, fill = Freq)) +
 X_train_scaled <- scale(X_train)
 X_test_scaled <- scale(X_test, center = attr(X_train_scaled, "scaled:center"), scale = attr(X_train_scaled, "scaled:scale"))
 
-y_pred_knn <- knn(train = X_train, test = X_test, cl = y_train, k = 5)
+y_pred_knn <- knn(train = X_train_scaled, test = X_test_scaled, cl = y_train, k = 5)
 
 conf_matrix_knn <- confusionMatrix(y_pred_knn, y_test, positive = "1")
 accuracy_knn <- conf_matrix_knn$overall['Accuracy']

@@ -1,5 +1,5 @@
-# Introduction to Machine Learning
-Welcome to the repository for the An Introduction to Machine Learning course (formally 'Intro to Machine Learning in Python' delivered in 2023 and 2024). This course will be re-delivered this year (2026 - 06/03/ session 1 & 13/03/ session 2) by Somya Iqbal & Joy Lan. The course is aimed at providing an introduction to machine learning covering:
+# Foundations of Machine Learning
+Welcome to the repository for the Foundations of Machine Learning course (formally 'Intro to Machine Learning in Python' delivered in 2023 and 2024). This course will be re-delivered this year (2026 - 06/03/ session 1 & 13/03/ session 2) by Somya Iqbal(session 1) & Joy Lan (session 2). The course is aimed at providing an introduction to machine learning covering:
 
 - What Is Machine Learning and A Recap of Exploratory Data Analysis (EDA)
 - Classification Basics and Logistic Regression
@@ -8,7 +8,7 @@ Welcome to the repository for the An Introduction to Machine Learning course (fo
 
 This course will be available for participants to engage in either R or Python. It is therefore expected that those taking this course have some beginner level of either Python or R (as offered in the [Introduction to Python](https://github.com/DCS-training/IntroToPython?tab=readme-ov-file) or [Introduction to R](https://github.com/DCS-training/IntroToRAndRStudio) CDCS courses).
 
-The materials in this repo are most recently adapted by **Chris Oldnall** (with original resources by **Bhargavi Ganesh**). All material collected here is free to use but is covered by a License: [![License: CC BY-NC 4.0](https://licensebuttons.net/l/by-nc/4.0/80x15.png)](https://creativecommons.org/licenses/by-nc/4.0/) license
+The materials in this repo are most recently adapted by **Chris Oldnall** with edits and adjustments by Somya and Joy (2026) - (original resources by **Bhargavi Ganesh**). All material collected here is free to use but is covered by a License: [![License: CC BY-NC 4.0](https://licensebuttons.net/l/by-nc/4.0/80x15.png)](https://creativecommons.org/licenses/by-nc/4.0/) license
 
 ## How to use Noteable.
 
